@@ -80,6 +80,6 @@ export class CalendarComponent implements OnInit {
     }
 
     public getRooms(){
-        return this.http.get<Room[]>('http://192.168.0.15/~user14/BOARDROOM_BOOKER/server/api/calendar/rooms/');
+        return this.http.get<Room[]>('http://gfl:8070/BOARDROOM_BOOKER/server/api/calendar/rooms/');
     }
 }
