@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {DataService} from "../../../proj72/src/app/data.service";
+import { DataService } from "../../../proj72/src/app/data.service";
 
 @Component({
   selector: 'app-root',

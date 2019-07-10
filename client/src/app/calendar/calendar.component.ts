@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import * as moment from 'moment';
 import { FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {initDayOfMonth} from "ngx-bootstrap/chronos/units/day-of-month";
+import { HttpClient } from '@angular/common/http';
+import { Room } from './room.module';
 
 @Component({
     selector: 'app-calendar',
@@ -16,7 +18,9 @@ export class CalendarComponent implements OnInit {
 
     public daysArr;
 
-    constructor(private fb: FormBuilder) {
+    public rooms: Room[];
+
+    constructor(private fb: FormBuilder, private http: HttpClient) {
         this.initDateForm();
     }
 
@@ -29,6 +33,7 @@ export class CalendarComponent implements OnInit {
 
     public ngOnInit() {
         this.daysArr = this.createCalender(this.date);
+        this.getRooms().subscribe(data => this.rooms = data);
     }
 
     public todayCheck(day){
@@ -72,5 +77,9 @@ export class CalendarComponent implements OnInit {
         }else{
             this.dateForm.get('dateTo').patchValue(dayFormated);
         }
+    }
+
+    public getRooms(){
+        return this.http.get<Room[]>('http://192.168.0.15/~user14/BOARDROOM_BOOKER/server/api/calendar/rooms/');
     }
 }
