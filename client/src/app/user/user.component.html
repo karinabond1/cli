@@ -36,12 +36,19 @@
   </div>-->
 
 
-
+  
+  
 
         <br><br>
+
+        
+
   <div class="col-lg-6">
+      <div *ngIf='name' style="text-align:center">
+          <h2> {{name}}!</h2>
+        </div>
     <h3>Log in!</h3>
-    <form (ngSubmit)="onSubmitLog(form2)" #form2="ngForm">
+    <form (ngSubmit)="onSubmitLog(form2)" #form2="ngForm" action='#'>
         <div class="form-group">
             <label for="exampleInputEmail1">Email address</label>
             <input required email class="form-control" minlength="3" ngModel name="email" #email="ngModel"  type="email" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
@@ -60,8 +67,12 @@
                 <div *ngIf="password.errors.minlength">Password should be minimum {{ password.errors.minlength.requiredLength }} characters!</div>
             </div>
         </div>
-        <input type="submit" name="btnR" class="btn btn-primary" value="Log in" [disabled]="form2.invalid">
+        <button onclick="window.location.reload();" type="submit" name="btnR" class="btn btn-primary"  [disabled]="form2.invalid">Log in</button>
     </form>
+  </div>
+  <div class='col-lg-6' >
+      <button (ngSubmit)="onSubmitLogOut()" onclick="window.location.reload();" type="submit" name="btnL" class="btn btn-danger"  >Log out</button>
   </div>
     </div>
 </div>
+

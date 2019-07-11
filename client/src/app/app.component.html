@@ -3,9 +3,10 @@
         <a class="navbar-brand" routerLink="">BOARDROOM BOOKER</a>
         <ul class="nav " routerLinkActive="active">
             <li class="nav-item"><a class="nav-item nav-link active" routerLink="">User</a></li>
-            <li class="nav-item"><a class="nav-item nav-link active" routerLink="calendar">Calendar</a></li>
+            <li class="nav-item" *ngIf="name"><a class="nav-item nav-link active" routerLink="calendar">Calendar</a></li>
+            <li class="nav-item" *ngIf="role=='admin'"><a class="nav-item nav-link active" routerLink="admin">Admin</a></li>
         </ul>
     </div>
 </nav>
-<br>
+
 <router-outlet></router-outlet>

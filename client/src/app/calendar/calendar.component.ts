@@ -2,8 +2,10 @@ import {Component, OnInit} from '@angular/core';
 import * as moment from 'moment';
 import { FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {initDayOfMonth} from "ngx-bootstrap/chronos/units/day-of-month";
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Room } from './room.module';
+import { catchError } from 'rxjs/operators'; 
+import { throwError } from "rxjs";
 
 @Component({
     selector: 'app-calendar',
@@ -80,6 +82,21 @@ export class CalendarComponent implements OnInit {
     }
 
     public getRooms(){
-        return this.http.get<Room[]>('http://gfl:8070/BOARDROOM_BOOKER/server/api/calendar/rooms/');
+        return this.http.get<Room[]>('http://192.168.0.15/~user14/BOARDROOM_BOOKER/server/api/calendar/rooms/')
+        .pipe(
+            catchError(this.handleError)
+          );
     }
+
+    private handleError(error: HttpErrorResponse) {
+        if (error.error instanceof ErrorEvent) {
+          console.error('An error occurred:', error.error.message);
+        } else {
+          console.error(
+            `Backend returned code ${error.status}, ` +
+            `body was: ${error.error}`);
+        }
+        return throwError(
+          'Something bad happened; please try again later.');
+    };
 }

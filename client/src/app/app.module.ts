@@ -14,11 +14,13 @@ import {UserComponent} from './user/user.component';
 import {CalendarComponent} from './calendar/calendar.component';
 import {NotFoundComponent} from './not-found/not-found.component';
 import { RoutingModule } from './routing/routing.module';
+import { AdminComponent } from './admin/admin.component';
 
 const appRoutes: Routes = [
     {path: '', component: UserComponent},
     { path: 'calendar', component: CalendarComponent} ,
-    { path: '**', component: NotFoundComponent }
+    { path: '**', component: NotFoundComponent },
+    { path: 'admin', component: AdminComponent }
 ];
 
 @NgModule({
@@ -26,7 +28,8 @@ const appRoutes: Routes = [
         AppComponent,
         UserComponent,
         CalendarComponent,
-        NotFoundComponent
+        NotFoundComponent,
+        AdminComponent
     ],
     imports: [
         AlertModule.forRoot(),
