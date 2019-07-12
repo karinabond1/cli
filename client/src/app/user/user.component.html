@@ -45,7 +45,10 @@
 
   <div class="col-lg-6">
       <div *ngIf='name' style="text-align:center">
-          <h2> {{name}}!</h2>
+          <h2>Hello, {{name}}!</h2>
+        </div>
+        <div *ngIf='error' class="red-st">
+          <h3>{{error}}</h3>
         </div>
     <h3>Log in!</h3>
     <form (ngSubmit)="onSubmitLog(form2)" #form2="ngForm" action='#'>
@@ -67,11 +70,11 @@
                 <div *ngIf="password.errors.minlength">Password should be minimum {{ password.errors.minlength.requiredLength }} characters!</div>
             </div>
         </div>
-        <button onclick="window.location.reload();" type="submit" name="btnR" class="btn btn-primary"  [disabled]="form2.invalid">Log in</button>
+        <button  type="submit" name="btnR" class="btn btn-primary"  [disabled]="form2.invalid">Log in</button>
     </form>
   </div>
   <div class='col-lg-6' >
-      <button (ngSubmit)="onSubmitLogOut()" onclick="window.location.reload();" type="submit" name="btnL" class="btn btn-danger"  >Log out</button>
+      <button (click)="onSubmitLogOut()"  type="submit" name="btnL" class="btn btn-danger"  >Log out</button>
   </div>
     </div>
 </div>

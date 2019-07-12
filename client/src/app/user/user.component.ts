@@ -46,19 +46,22 @@ export class UserComponent implements OnInit{
     public done: boolean = false;
     //public dataService: DataService;
     public name = localStorage.getItem('name');
+    public error = '';
 
     constructor( private http: HttpClient,private dataService: DataService){}
 
     
     onSubmitLogOut(){
+        console.log('f');
         localStorage.removeItem('id');
         localStorage.removeItem('name');
         localStorage.removeItem('status');
         localStorage.removeItem('role');
         this.name = '';
+        window.location.reload();
     }
 
-   
+   /*onclick="window.location.reload();"*/
     onSubmitLog(e) {
         //console.log(e.value.password);
         /*this.postUser(e.value.email,e.value.password).subscribe(data => {
@@ -77,12 +80,20 @@ export class UserComponent implements OnInit{
         .subscribe(
             data  => {
                 console.log("POST Request is successful ", data);
-                this.user = data;
-                localStorage.setItem('id', data[0]['id']);
-                localStorage.setItem('name', data[0]['name']);
-                localStorage.setItem('status', data[0]['status']);
-                localStorage.setItem('role', data[0]['role']);
-                this.name = 'Hello, '+localStorage.getItem('name');
+                if(Array.isArray(data)){
+                    this.user = data;
+                    localStorage.setItem('id', data[0]['id']);
+                    localStorage.setItem('name', data[0]['name']);
+                    localStorage.setItem('status', data[0]['status']);
+                    localStorage.setItem('role', data[0]['role']);
+                    this.name = localStorage.getItem('name');
+                    window.location.reload();
+                }else{
+                    e.value.email='';
+                    e.value.password='';
+                    this.error = "Email and/or password is incorrect!";
+                }
+                
             },
             error  => {
 

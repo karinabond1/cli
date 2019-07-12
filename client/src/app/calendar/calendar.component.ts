@@ -1,9 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import * as moment from 'moment';
-import { FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators, FormsModule} from '@angular/forms';
 import {initDayOfMonth} from "ngx-bootstrap/chronos/units/day-of-month";
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Room } from './room.module';
+import { Event } from './event.module';
 import { catchError } from 'rxjs/operators'; 
 import { throwError } from "rxjs";
 
@@ -21,6 +22,10 @@ export class CalendarComponent implements OnInit {
     public daysArr;
 
     public rooms: Room[];
+    public events: Event[];
+    public idRoom;
+    public year = this.date.format('YYYY');
+    public month = this.date.format('MM');
 
     constructor(private fb: FormBuilder, private http: HttpClient) {
         this.initDateForm();
@@ -51,20 +56,43 @@ export class CalendarComponent implements OnInit {
             .map(Number.call, Number)
             .map((n) => {
                 return moment(firstDay).add(n, 'd');
+                
             });
         for (let n = 0; n < firstDay.weekday(); n++) {
             days.unshift(null);
         }
+        for (let i = 1; i < days.length; i++) {
+            //console.log(days[n].format('YYYY-MM-DD'));
+            if(this.events){
+                for (let j = 0; j < this.events.length; j++) {
+                    if(days[i].format('YYYY-MM-DD')==this.events[j].create_date){
+                        console.log(this.events[j].start+"-"+this.events[j].end);
+                        days[i].push(this.events[j].end);
+                        console.log(days[i]);
+                    }
+                    //console.log(this.events[j].create_date);
+                }
+            }           
+            
+        }
+        /*days.forEach(day=> {
+            console.log(day.moment());
+        });*/
+        //console.log(days[1].format('YYYY-MM-DD'));
         return days;
     }
 
     public nextMonth(){
         this.date.add(1,'M');
+        this.month = this.date.format('MM');
+        this.year = this.date.format('YYYY');
         this.daysArr=this.createCalender(this.date);
     }
 
     public prevMonth(){
         this.date.subtract(1,'M');
+        this.month = this.date.format('MM');
+        this.year = this.date.format('YYYY');
         this.daysArr=this.createCalender(this.date);
     }
 
@@ -81,8 +109,29 @@ export class CalendarComponent implements OnInit {
         }
     }
 
+    public chooseRoom(e){
+        //console.log(e.value.roomm);
+        this.idRoom = e.value.roomm;
+        
+        //console.log(this.date.format('YYYY')+" "+this.date.format('MM'));
+        this.getEvents(this.idRoom, this.month, this.year).subscribe(data => {
+            this.events = data;
+            this.daysArr = this.createCalender(this.date);
+        });
+        
+        //console.log(this.events);
+        //setTimeout(function() { console.log(this.events); }, 1000);
+    }
+
     public getRooms(){
         return this.http.get<Room[]>('http://192.168.0.15/~user14/BOARDROOM_BOOKER/server/api/calendar/rooms/')
+        .pipe(
+            catchError(this.handleError)
+          );
+    }
+
+    public getEvents(roomId, month, year){
+        return this.http.get<Event[]>('http://192.168.0.15/~user14/BOARDROOM_BOOKER/server/api/calendar/eventsByMonth/'+roomId+'/'+month+'/'+year)
         .pipe(
             catchError(this.handleError)
           );
