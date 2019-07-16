@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, Inject} from '@angular/core';
 import * as moment from 'moment';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule} from '@angular/forms';
 import {initDayOfMonth} from "ngx-bootstrap/chronos/units/day-of-month";
@@ -7,6 +7,9 @@ import { Room } from './room.module';
 import { Event } from './event.module';
 import { catchError } from 'rxjs/operators'; 
 import { throwError } from "rxjs";
+//import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+//import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+//import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'app-calendar',
@@ -23,12 +26,30 @@ export class CalendarComponent implements OnInit {
 
     public rooms: Room[];
     public events: Event[];
+    public weekStart = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    public weekStartTrue = true;
     public idRoom;
     public year = this.date.format('YYYY');
     public month = this.date.format('MM');
+    public eventTrue = true;
+
+    closeResult: string;
 
     constructor(private fb: FormBuilder, private http: HttpClient) {
         this.initDateForm();
+    }
+
+
+    public weekFromMon(){
+        this.weekStart = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+        this.weekStartTrue = false;
+        this.daysArr = this.createCalender(this.date);
+    }
+
+    public weekFromSun(){
+        this.weekStart = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        this.weekStartTrue = true;
+        this.daysArr = this.createCalender(this.date);
     }
 
     public initDateForm(){
@@ -50,7 +71,27 @@ export class CalendarComponent implements OnInit {
         return moment().format('L') === day.format('L');
     }
 
+    
+
+    public weekendCheck(day){
+        if(!day){
+            return false;
+        }
+        //console.log(day.format('ddd'));
+        //console.log(moment().format('ddd'));
+        
+        if(day.format('ddd')=='Sat' || day.format('ddd')=='Sun' || moment().format('L').slice(3).slice(0,2) > day.format('DD')){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
     createCalender(month) {
+        let week = 0;
+        if(!this.weekStartTrue){
+            week = 1;
+        }
         let firstDay = moment(month).startOf('M');
         let days = Array.apply(null, {length: month.daysInMonth()})
             .map(Number.call, Number)
@@ -58,10 +99,10 @@ export class CalendarComponent implements OnInit {
                 return moment(firstDay).add(n, 'd');
                 
             });
-        for (let n = 0; n < firstDay.weekday(); n++) {
+        for (let n = 0; n < firstDay.weekday()-week; n++) {
             days.unshift(null);
         }
-        for (let i = 1; i < days.length; i++) {
+        /*for (let i = 1; i < days.length; i++) {
             //console.log(days[n].format('YYYY-MM-DD'));
             if(this.events){
                 for (let j = 0; j < this.events.length; j++) {
@@ -74,7 +115,7 @@ export class CalendarComponent implements OnInit {
                 }
             }           
             
-        }
+        }*/
         /*days.forEach(day=> {
             console.log(day.moment());
         });*/
@@ -96,9 +137,11 @@ export class CalendarComponent implements OnInit {
         this.daysArr=this.createCalender(this.date);
     }
 
-
-    public selectedDate(day){
-        let dayFormated = day.format('MM/DD/YYYY');
+    
+    public selectedDate(day) : void {
+        console.log(day);
+        
+        /*let dayFormated = day.format('MM/DD/YYYY');
         if(this.dateForm.valid){
             this.dateForm.setValue({dateFrom: null, dateTo:null})
         }
@@ -106,8 +149,23 @@ export class CalendarComponent implements OnInit {
             this.dateForm.get('dateFrom').patchValue(dayFormated);
         }else{
             this.dateForm.get('dateTo').patchValue(dayFormated);
-        }
+        }*/
     }
+
+    
+
+    /*openDialog(): void {
+        const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+          width: '250px',
+          data: {name: this.name, animal: this.animal}
+        });
+    
+        dialogRef.afterClosed().subscribe(result => {
+          console.log('The dialog was closed');
+          this.animal = result;
+        });
+      }*/
+    
 
     public chooseRoom(e){
         //console.log(e.value.roomm);
@@ -116,6 +174,7 @@ export class CalendarComponent implements OnInit {
         //console.log(this.date.format('YYYY')+" "+this.date.format('MM'));
         this.getEvents(this.idRoom, this.month, this.year).subscribe(data => {
             this.events = data;
+            console.log(data);
             this.daysArr = this.createCalender(this.date);
         });
         
@@ -124,14 +183,14 @@ export class CalendarComponent implements OnInit {
     }
 
     public getRooms(){
-        return this.http.get<Room[]>('http://192.168.0.15/~user14/BOARDROOM_BOOKER/server/api/calendar/rooms/')
+        return this.http.get<Room[]>(/*'http://192.168.0.15/~user14/*/'http://gfl:8070/BOARDROOM_BOOKER/server/api/calendar/rooms/')
         .pipe(
             catchError(this.handleError)
           );
     }
 
     public getEvents(roomId, month, year){
-        return this.http.get<Event[]>('http://192.168.0.15/~user14/BOARDROOM_BOOKER/server/api/calendar/eventsByMonth/'+roomId+'/'+month+'/'+year)
+        return this.http.get<Event[]>(/*'http://192.168.0.15/~user14/*/'http://gfl:8070/BOARDROOM_BOOKER/server/api/calendar/eventsByMonth/'+roomId+'/'+month+'/'+year)
         .pipe(
             catchError(this.handleError)
           );

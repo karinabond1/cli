@@ -8,15 +8,47 @@
     border: 3px solid #ffffff;
     float: left;
     text-align: center;
-    padding: 13px;
+    padding: 5px;
 }
-
+div.hover-efect:hover{
+    background-color: darkred;
+}
+.week-days{
+    background-color: #f3d7e0;
+}
+.part{
+    width: 100%;
+    padding-top: 23px;
+    overflow-y: auto!important;
+    
+}
+.small-btn{
+    font-size: 10px;
+    margin: 2px;
+     
+}
+.day-number{
+    position: absolute;
+    
+}
 #calendar{
     width: 840px;
 }
 
 .inactive{
+    display: none;
     opacity: 0.6;
+}
+
+
+button.active{
+    background-color: #752c8f;
+    pointer-events:inherit;
+    display: inline-block;
+}
+
+div.inactive{
+    pointer-events:none;
 }
 
 .width-20px{
@@ -24,7 +56,7 @@
 }
 
 .today{
-    background: #de8ea4;
+    background: #feffac;
 }
 
 
